@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<head>
+    <script>
+        function puzzle1button() {
+            const input = document.getElementById("puzzle1-input").value;
+            const inputArr = input.split(/\n/);
+            // We'll iterate though and calculate the total score for each mapping:
+            let allMappings = [
+                {
+                    "X": "A",
+                    "Y": "B",
+                    "Z": "C",
+                    "totalScore": 0
+                },{
+                    "X": "A",
+                    "Z": "B",
+                    "Y": "C",
+                    "totalScore": 0
+                },{
+                    "Y": "A",
+                    "X": "B",
+                    "Z": "C",
+                    "totalScore": 0
+                },{
+                    "Y": "A",
+                    "Z": "B",
+                    "X": "C",
+                    "totalScore": 0
+                },{
+                    "Z": "A",
+                    "Y": "B",
+                    "X": "C",
+                    "totalScore": 0
+                },{
+                    "Z": "A",
+                    "X": "B",
+                    "Y": "C",
+                    "totalScore": 0
+                }
+            ];
+            let mappingNum = 0;
+            for (const mapping of allMappings) {
+                mappingNum = mappingNum + 1;
+                console.log('Processing the ' + mappingNum + 'th mapping');
+                let lineNum = 0;
+                for (const line of inputArr) {
+                    if (line === "") {
+                        continue;
+                    }
+                    lineNum = lineNum + 1;
+                    // console.log('Processing the ' + lineNum + 'th line');
+                    let chars = line.split(/ /);
+                    let scoreFromThisGame = calcMyScore(chars[0], mapping[chars[1]]);
+                    // console.log('Playing ' + chars[0] + ' against ' + mapping[chars[1]] + '. Got: ' + scoreFromThisGame);
+                    mapping.totalScore = mapping.totalScore + scoreFromThisGame;
+                }
+
+            }
+            console.log(allMappings);
+            // Puzzle 1 asks "what is your score if the games go according to the input, and your mapping is
+            // X = A, Y = B, Z = C". That mapping is our 0th mapping above:
+            document.getElementById("puzzle1-answer").textContent = allMappings[0].totalScore;
+        }
+
+        /**
+         * A = Rock = 1 point
+         * B = Paper = 2 points
+         * C = Scissors = 3 points
+         * Bonus = 0 if I lose
+         *         3 if it's a draw
+         *         6 if I win
+         * @param opponentChoice
+         * @param myChoice
+         */
+        function calcMyScore(opponentChoice, myChoice) {
+            const game = opponentChoice + myChoice;
+            switch (game) {
+                case 'AA':
+                    return 4;
+                case 'AB':
+                    return 8;
+                case 'AC':
+                    return 3;
+                case 'BA':
+                    return 1;
+                case 'BB':
+                    return 5;
+                case 'BC':
+                    return 9;
+                case 'CA':
+                    return 7;
+                case 'CB':
+                    return 2;
+                case 'CC':
+                    return 6;
+                default:
+                    throw new Error("calcMyScore got a game it didn't understand: " + game);
+            }
+        }
+
+        /** Puzzle 1 asked us: if the input was giving us what to play, our move encoded as X=A, Y=B, Z=C, what would
+         * our score be. I assumed the next puzzle was going to be to solve that for all possible encodings, and then
+         * pick the highest score. That was wrong.
+         * Puzzle 2 tells us X = we need to lose. Y means we need to draw, Z means we need to win.
+         */
+        function puzzle2button() {
+            const input = document.getElementById("puzzle1-input").value;
+            const inputArr = input.split(/\n/);
+            let totalScore = 0;
+            let lineNum = 0;
+            for (const line of inputArr) {
+                if (line === "") {
+                    continue;
+                }
+                lineNum = lineNum + 1;
+                // console.log('Processing the ' + lineNum + 'th line');
+                let chars = line.split(/ /);
+                let myChoice = 'F'; // initialized to any invalid choice
+                switch (chars[1]) {
+                    case 'X':
+                        myChoice = getLoseFor(chars[0]);
+                        break;
+                    case 'Y':
+                        myChoice = getDrawFor(chars[0]);
+                        break;
+                    case 'Z':
+                        myChoice = getWinFor(chars[0]);
+                        break;
+                    default:
+                        throw new Error('puzzle2button() got unexpected input');
+                }
+                let scoreFromThisGame = calcMyScore(chars[0], myChoice);
+                // console.log('Playing ' + chars[0] + ' against ' + mapping[chars[1]] + '. Got: ' + scoreFromThisGame);
+                totalScore = totalScore + scoreFromThisGame;
+            }
+
+            document.getElementById("puzzle2-answer").textContent = totalScore;
+        }
+
+        function getDrawFor(opponentsChoice) {
+            // To draw, for any choice the opponent makes, make the same choice:
+            return opponentsChoice;
+        }
+
+        function getLoseFor(opponentsChoice) {
+            switch(opponentsChoice) {
+                case 'A':
+                    return 'C';
+                case 'B':
+                    return 'A';
+                case 'C':
+                    return 'B';
+                default:
+                    throw new Error("getLoseFor got a choice it didn't understand: " + opponentsChoice);
+            }
+        }
+
+        function getWinFor(opponentsChoice) {
+            switch(opponentsChoice) {
+                case 'A':
+                    return 'B';
+                case 'B':
+                    return 'C';
+                case 'C':
+                    return 'A';
+                default:
+                    throw new Error("getWinFor got a choice it didn't understand: " + opponentsChoice);
+            }
+        }
+    </script>
+</head>
+<body>
+<textarea id="puzzle1-input">Paste the input here</textarea>
+<button onclick="puzzle1button()">Click here for Puzzle 1's solution</button>
+<button onclick="puzzle2button()">Click here for Puzzle 2's solution</button>
+
+<p>The answer to puzzle 1 is: <span id="puzzle1-answer">&lt;to be filled in after you click the button&gt;</span></p>
+<p>The answer to puzzle 2 is: <span id="puzzle2-answer">&lt;to be filled in after you click the button&gt;</span></p>
+<p><a href="index.html">Return to index</a></p>
+</body>

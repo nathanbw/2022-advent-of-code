@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<head>
+    <script>
+        function puzzle1button() {
+            // Each value in this array is the total number of calories held by a single elf
+            let totalCaloriesPerElf = [];
+            let currentElf = 0;
+            const input = document.getElementById("puzzle1-input").value;
+            // console.log(input);
+            const inputArr = input.split(/\n/);
+            for (const line of inputArr) {
+                // console.log(line);
+                if (line === "") {
+                    // console.log("got an empty line");
+                    currentElf = currentElf + 1;
+                } else {
+                    totalCaloriesPerElf[currentElf] = (typeof totalCaloriesPerElf[currentElf] === 'undefined' ? 0 : totalCaloriesPerElf[currentElf]) + Number(line);
+                }
+            }
+            function compareNumbersDescending(a, b) {
+                return b - a;
+            }
+            // Answer to Day 1 puzzle 1 is 70369
+            totalCaloriesPerElf.sort(compareNumbersDescending);
+            document.getElementById("puzzle1-answer").textContent = totalCaloriesPerElf[0];
+            document.getElementById("puzzle2-answer").textContent = totalCaloriesPerElf[0]
+                + totalCaloriesPerElf[1] + totalCaloriesPerElf[2];
+        }
+    </script>
+</head>
+<body>
+<textarea id="puzzle1-input">Paste the input here</textarea>
+<button onclick="puzzle1button()">Click here to get the answer after pasting the input</button>
+<p>The answer to puzzle 1 is: <span id="puzzle1-answer">&lt;to be filled in after you click the button&gt;</span></p>
+<p>The answer to puzzle 2 is: <span id="puzzle2-answer">&lt;to be filled in after you click the button&gt;</span></p>
+<p><a href="index.html">Return to index</a></p>
+</body>
