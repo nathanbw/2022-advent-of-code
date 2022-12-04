@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="./style.css">
+    <script>
+        /**
+         * Puzzle 1 is asking us to find which characters exist in the first /and/ second half of a string. There will
+         * only be one character that appears in both halves of the string, but it can occur multiple times, e.g.,
+         * abazxbbx could happen (b shows up twice in second half) but abazxabx couldn't (a and b show up in second half)
+         *
+         * Once you've found which "type" (character) repeats in each string, find the priority for that type, and add
+         * it to the total. Return the total.
+         *
+         * Waffles's take: The requirements were subtle and hard to tease out. Two major missteps I took:
+         * 1. Assuming we only wanted to count the priority of each unique type that was duplicated in any rucksack.
+         *    e.g.: abaa\nabaa would yield a total of 1, since "a" was the only duplicated type in all rucksacks
+         * 2. Assuming we wanted to sum up the total of all duplicated types for each rucksack, so if "a" was duplicated
+         *    twice in the same rucksack, the total would be 2. This was just a bug on my part -- this was clearly
+         *    accounted for in the example in the requirements
+         *
+         * I think number 1. above could have been avoided if the example in the requirements included at least two
+         * rucksacks that had the same duplicated character
+         */
+        function puzzle1button() {
+            const input = document.getElementById("puzzle1-input").value;
+            const inputArr = input.split(/\n/);
+
+            let totalPriority = 0;
+
+            let lineNum = 0;
+            for (const line of inputArr) {
+                if (line === "") {
+                    continue;
+                }
+                lineNum = lineNum + 1;
+                // console.log('Processing the ' + lineNum + 'th line');
+                let firstHalf = line.substring(0, line.length / 2);
+                let secondHalf = line.substring(line.length / 2);
+                // console.log("first half: " + firstHalf);
+                // console.log("second half: " + secondHalf);
+                let packedInFirstCompartment = {};
+                for (const type of firstHalf) {
+                    packedInFirstCompartment[type] = true;
+                }
+                let dupesFromThisRuckSack = '';
+                for (const type of secondHalf) {
+                    if (packedInFirstCompartment[type]) {
+                        dupesFromThisRuckSack = dupesFromThisRuckSack + type;
+                    }
+                }
+                if (dupesFromThisRuckSack.length !== 0) {
+                    totalPriority = totalPriority + getPriorityForType(dupesFromThisRuckSack[0]);
+                }
+            }
+            document.getElementById("puzzle1-answer").textContent = "" + totalPriority;
+        }
+
+        function getPriorityForType(type) {
+            let currentTypePriority = 0;
+            if (type.toLowerCase() === type) {
+                currentTypePriority = type.charCodeAt(0) - 96;
+            } else {
+                currentTypePriority = type.charCodeAt(0) - 38;
+            }
+            // console.log(type + ' has priority: ' + currentTypePriority);
+            return currentTypePriority;
+        }
+
+        /**
+         * Puzzle 2 is asking us to find the (only) item type that is shared between each group of three rucksacks, then
+         * sum the priorities of that item per group (watch out for the pitfalls described in puzzle 1 -- I think if
+         * the shared item type for two groups are "a", and "a", our total should be 2.
+         *
+         * Guess 1: 100
+         * Guess 2: 2752 (the right answer)
+         * The bug was that I did "totalPriority = totalPriority + 1" instead of
+         * "totalPriority = totalPriority + groupPriority", so I was only counting each group, not the priority of each
+         * group
+         */
+        function puzzle2button() {
+            const input = document.getElementById("puzzle1-input").value;
+            const inputArr = input.split(/\n/);
+            let totalPriority = 0;
+
+            let one = {};
+            let two = {};
+            let three = {};
+            let curObj = undefined;
+            let endOfGroup = false;
+            let groupPriority = 0;
+            let groupNum = 0;
+
+            let lineNum = 0;
+            for (const line of inputArr) {
+                if (line === "") {
+                    continue;
+                }
+                // We'll start counting lines at 0, even though we'll starting counting groups at 1
+                // console.log('Starting processing the ' + lineNum + 'th line');
+                switch (lineNum % 3) {
+                    case 0:
+                        // clear all group data and start filling the groups objects
+                        groupNum = groupNum + 1;
+                        curObj = one;
+                        break;
+                    case 1:
+                        curObj = two;
+                        break;
+                    case 2:
+                        curObj = three;
+                        endOfGroup = true;
+                        break;
+                    default:
+                        throw new Error("Ooops you bwoke it");
+                }
+                for (const type of line) {
+                    curObj[type] = true;
+                }
+                if (endOfGroup) {
+                    // 1. Find which type is the badge type (it's the only type in all three rucksacks)
+                    for (const curType in one) {
+                        if (two[curType] && three[curType]) {
+                            groupPriority = getPriorityForType(curType);
+                        }
+                    }
+                    if (groupPriority === 0) {
+                        throw new Error("I didn't find a common type for group ending on line: " + lineNum)
+                    }
+                    // 2. Add the priority of that type to the total
+                    totalPriority = totalPriority + groupPriority;
+                    // 3. Set up the objects for the next group
+                    one = {};
+                    two = {};
+                    three = {};
+                    groupPriority = 0;
+                    endOfGroup = false;
+                }
+
+                lineNum = lineNum + 1;
+                // console.log('Finished processing the ' + lineNum + 'th line');
+            }
+            console.log("I found " + groupNum + ' groups in the input');
+            document.getElementById("puzzle2-answer").textContent = totalPriority;
+        }
+
+        function getDrawFor(opponentsChoice) {
+            // To draw, for any choice the opponent makes, make the same choice:
+            return opponentsChoice;
+        }
+
+        function getLoseFor(opponentsChoice) {
+            switch(opponentsChoice) {
+                case 'A':
+                    return 'C';
+                case 'B':
+                    return 'A';
+                case 'C':
+                    return 'B';
+                default:
+                    throw new Error("getLoseFor got a choice it didn't understand: " + opponentsChoice);
+            }
+        }
+
+        function getWinFor(opponentsChoice) {
+            switch(opponentsChoice) {
+                case 'A':
+                    return 'B';
+                case 'B':
+                    return 'C';
+                case 'C':
+                    return 'A';
+                default:
+                    throw new Error("getWinFor got a choice it didn't understand: " + opponentsChoice);
+            }
+        }
+    </script>
+</head>
+<body>
+<textarea id="puzzle1-input">Paste the input here</textarea>
+<button onclick="puzzle1button()">Click here for Puzzle 1's solution</button>
+<button onclick="puzzle2button()">Click here for Puzzle 2's solution</button>
+
+<p>The answer to puzzle 1 is: <span id="puzzle1-answer">&lt;to be filled in after you click the button&gt;</span></p>
+<p>The answer to puzzle 2 is: <span id="puzzle2-answer">&lt;to be filled in after you click the button&gt;</span></p>
+<p><a href="index.html">Return to index</a></p>
+</body>
