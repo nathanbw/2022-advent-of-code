@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="./style.css">
+    <script>
+        /**
+         * Puzzle 1 is asking us to find all pairs where one of the ranges completely encloses the other
+         */
+        function puzzle1button() {
+            const input = document.getElementById("puzzle1-input").value;
+            const inputArr = input.split(/\n/);
+
+            let numEnclosingPairs = 0;
+
+            let lineNum = 0;
+            for (const line of inputArr) {
+                if (line === "") {
+                    continue;
+                }
+                // console.log('Processing the ' + lineNum + 'th line');
+                let ranges = line.split(/,/);
+
+                let firstRangeStart = Number(ranges[0].split(/-/)[0]);
+                let firstRangeEnd = Number(ranges[0].split(/-/)[1]);
+                let secondRangeStart = Number(ranges[1].split(/-/)[0]);
+                let secondRangeEnd = Number(ranges[1].split(/-/)[1]);
+                console.log(firstRangeStart + "-" + firstRangeEnd + "," + secondRangeStart + "-" + secondRangeEnd);
+
+                if (
+                    (firstRangeStart <= secondRangeStart && firstRangeEnd >= secondRangeEnd)
+                    || (firstRangeStart >= secondRangeStart && firstRangeEnd <= secondRangeEnd)
+                ) {
+                    numEnclosingPairs = numEnclosingPairs + 1;
+                }
+
+                lineNum = lineNum + 1;
+            }
+            document.getElementById("puzzle1-answer").textContent = "" + numEnclosingPairs;
+        }
+
+        /**
+         * Puzzle 2 is asking us to find all pairs that overlap at all
+         */
+        function puzzle2button() {
+            const input = document.getElementById("puzzle1-input").value;
+            const inputArr = input.split(/\n/);
+
+            let numOverlappingPairs = 0;
+
+            let lineNum = 0;
+            for (const line of inputArr) {
+                if (line === "") {
+                    continue;
+                }
+                // console.log('Processing the ' + lineNum + 'th line');
+                let ranges = line.split(/,/);
+
+                let firstRangeStart = Number(ranges[0].split(/-/)[0]);
+                let firstRangeEnd = Number(ranges[0].split(/-/)[1]);
+                let secondRangeStart = Number(ranges[1].split(/-/)[0]);
+                let secondRangeEnd = Number(ranges[1].split(/-/)[1]);
+                console.log(firstRangeStart + "-" + firstRangeEnd + "," + secondRangeStart + "-" + secondRangeEnd);
+
+                if (
+                    (firstRangeStart >= secondRangeStart && firstRangeStart <= secondRangeEnd)
+                    || (firstRangeEnd >= secondRangeStart && firstRangeEnd <= secondRangeEnd)
+                    || (secondRangeStart >= firstRangeStart && secondRangeStart <= firstRangeEnd)
+                    || (secondRangeEnd >= firstRangeStart && secondRangeEnd <= firstRangeEnd)
+                ) {
+                    numOverlappingPairs = numOverlappingPairs + 1;
+                }
+
+                lineNum = lineNum + 1;
+            }
+            document.getElementById("puzzle2-answer").textContent = "" + numOverlappingPairs;
+        }
+    </script>
+</head>
+<body>
+<textarea id="puzzle1-input">Paste the input here</textarea>
+<button onclick="puzzle1button()">Click here for Puzzle 1's solution</button>
+<button onclick="puzzle2button()">Click here for Puzzle 2's solution</button>
+
+<p>The answer to puzzle 1 is: <span id="puzzle1-answer">&lt;to be filled in after you click the button&gt;</span></p>
+<p>The answer to puzzle 2 is: <span id="puzzle2-answer">&lt;to be filled in after you click the button&gt;</span></p>
+<p><a href="index.html">Return to index</a></p>
+</body>
