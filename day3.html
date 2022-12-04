@@ -141,37 +141,6 @@
             console.log("I found " + groupNum + ' groups in the input');
             document.getElementById("puzzle2-answer").textContent = totalPriority;
         }
-
-        function getDrawFor(opponentsChoice) {
-            // To draw, for any choice the opponent makes, make the same choice:
-            return opponentsChoice;
-        }
-
-        function getLoseFor(opponentsChoice) {
-            switch(opponentsChoice) {
-                case 'A':
-                    return 'C';
-                case 'B':
-                    return 'A';
-                case 'C':
-                    return 'B';
-                default:
-                    throw new Error("getLoseFor got a choice it didn't understand: " + opponentsChoice);
-            }
-        }
-
-        function getWinFor(opponentsChoice) {
-            switch(opponentsChoice) {
-                case 'A':
-                    return 'B';
-                case 'B':
-                    return 'C';
-                case 'C':
-                    return 'A';
-                default:
-                    throw new Error("getWinFor got a choice it didn't understand: " + opponentsChoice);
-            }
-        }
     </script>
 </head>
 <body>
