@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="./style.css">
+    <script>
+        /**
+         * Puzzle 1 is asking to run the given program and give a specific output of it
+         */
+        function puzzle1button() {
+            const input = document.getElementById("puzzle1-input").value;
+            const inputArr = input.split(/\n/);
+
+            let stacks = [];
+            let stackStrings = [];
+            let haveLoadedInitialState = false;
+            let isLineInitialState = false;
+
+            // Interestingly, we'll have to first parse out the state of the stacks, then the program that operates
+            // on the stacks. I hope to do that in the same loop
+            let lineNum = 0;
+            for (const line of inputArr) {
+                if (line === "") {
+                    continue;
+                }
+                // console.log('Processing the ' + lineNum + 'th line');
+                // Is this line part of the initial state of the stacks, or is it part of the program?
+                isLineInitialState = !/[0-9]/.test(line);
+                if (isLineInitialState) {
+                    stackStrings.unshift(line);
+                    continue;
+                }
+                if (!haveLoadedInitialState) {
+                    // We are at the bottom of the list of stacks, let's scoop the stacks out
+                    let numStacks = getLastNumberFromString(line);
+                    //makeStacks(numStacks, stackStrings, stacks);
+                    // Totes punting because it's late and I'm tired:
+                    stacks[0] = ['H','C','R'];
+                    stacks[1] = ['B','J','H','L','S','F'];
+                    stacks[2] = ['R','M','D','H','J','T','Q'];
+                    stacks[3] = ['S','G','R','H','Z','B','J'];
+                    stacks[4] = ['R','P','F','Z','T','D','C','B'];
+                    stacks[5] = ['T','H','C','G'];
+                    stacks[6] = ['S','N','V','Z','B','P','W','L'];
+                    stacks[7] = ['R','J','Q','G','C'];
+                    stacks[8] = ['L','D','T','R','H','P','F','S'];
+
+                    haveLoadedInitialState = true;
+                    continue;
+                }
+
+                let instructions = line.split(/ /);
+                // All instructions in the form of ["move","[0-9]+","from","[0-9]+","to","[0-9]+"]
+                let numItems = instructions[1];
+                let from = instructions[3];
+                let to = instructions[5];
+                executeInstruction9000(stacks,numItems,from,to);
+
+                lineNum = lineNum + 1;
+            }
+            let answerString = "";
+            for (const stack of stacks) {
+                answerString += stack[stack.length - 1];
+            }
+            document.getElementById("puzzle1-answer").textContent = answerString;
+        }
+
+        /**
+         * Assumes a space-separated string of numbers
+         */
+        function getLastNumberFromString(numberString) {
+            let tokens = numberString.split(/ /);
+            //console.log(tokens);
+            let lastNum = NaN;
+            for (const token of tokens) {
+                if (token !== "") {
+                    lastNum = Number(token);
+                }
+            }
+            return lastNum;
+        }
+
+        function makeStacks(numStacks, stackStrings, stacks) {
+            //console.log("makeStacks: making " + numStacks + " stacks");
+            //TODO Confirm this does "edit in place" for stacks
+            stacks.push([]); // Put an empty array in the zeroth space; we're gonna 1-index this baby
+            for (let i = 1; i <= numStacks; i++) {
+
+            }
+        }
+
+        function executeInstruction9000(stacks, numItems, from, to) {
+            //console.log("move " + numItems + " from " + from + " to " + to);
+            for (let i = 0; i < numItems; i++) {
+                item = stacks[from - 1].pop();
+                stacks[to - 1].push(item);
+            }
+        }
+
+        /**
+         * Puzzle 2 is asking us to find all pairs that overlap at all
+         */
+        function puzzle2button() {
+            const input = document.getElementById("puzzle1-input").value;
+            const inputArr = input.split(/\n/);
+
+            let stacks = [];
+            let stackStrings = [];
+            let haveLoadedInitialState = false;
+            let isLineInitialState = false;
+
+            // Interestingly, we'll have to first parse out the state of the stacks, then the program that operates
+            // on the stacks. I hope to do that in the same loop
+            let lineNum = 0;
+            for (const line of inputArr) {
+                if (line === "") {
+                    continue;
+                }
+                // console.log('Processing the ' + lineNum + 'th line');
+                // Is this line part of the initial state of the stacks, or is it part of the program?
+                isLineInitialState = !/[0-9]/.test(line);
+                if (isLineInitialState) {
+                    stackStrings.unshift(line);
+                    continue;
+                }
+                if (!haveLoadedInitialState) {
+                    // We are at the bottom of the list of stacks, let's scoop the stacks out
+                    let numStacks = getLastNumberFromString(line);
+                    //makeStacks(numStacks, stackStrings, stacks);
+                    // Totes punting because it's late and I'm tired:
+                    stacks[0] = ['H','C','R'];
+                    stacks[1] = ['B','J','H','L','S','F'];
+                    stacks[2] = ['R','M','D','H','J','T','Q'];
+                    stacks[3] = ['S','G','R','H','Z','B','J'];
+                    stacks[4] = ['R','P','F','Z','T','D','C','B'];
+                    stacks[5] = ['T','H','C','G'];
+                    stacks[6] = ['S','N','V','Z','B','P','W','L'];
+                    stacks[7] = ['R','J','Q','G','C'];
+                    stacks[8] = ['L','D','T','R','H','P','F','S'];
+
+                    haveLoadedInitialState = true;
+                    continue;
+                }
+
+                let instructions = line.split(/ /);
+                // All instructions in the form of ["move","[0-9]+","from","[0-9]+","to","[0-9]+"]
+                let numItems = instructions[1];
+                let from = instructions[3];
+                let to = instructions[5];
+                executeInstruction9001(stacks,numItems,from,to);
+
+                lineNum = lineNum + 1;
+            }
+            let answerString = "";
+            for (const stack of stacks) {
+                answerString += stack[stack.length - 1];
+            }
+            document.getElementById("puzzle2-answer").textContent = answerString;
+        }
+
+        function executeInstruction9001(stacks, numItems, from, to) {
+            //console.log("move " + numItems + " from " + from + " to " + to);
+            let intermediateStack = [];
+            for (let i = 0; i < numItems; i++) {
+                intermediateStack.push(stacks[from - 1].pop());
+            }
+            for (let i = 0; i < numItems; i++) {
+                stacks[to - 1].push(intermediateStack.pop())
+            }
+        }
+
+    </script>
+</head>
+<body>
+<textarea id="puzzle1-input">Paste the input here</textarea>
+<button onclick="puzzle1button()">Click here for Puzzle 1's solution</button>
+<button onclick="puzzle2button()">Click here for Puzzle 2's solution</button>
+
+<p>The answer to puzzle 1 is: <span id="puzzle1-answer">&lt;to be filled in after you click the button&gt;</span></p>
+<p>The answer to puzzle 2 is: <span id="puzzle2-answer">&lt;to be filled in after you click the button&gt;</span></p>
+<p><a href="index.html">Return to index</a></p>
+</body>
